@@ -30,6 +30,8 @@ py -3 -m py_compile ^
   tools\tellipatch_resource_v122.py ^
   tools\netslum_completion_v124.py ^
   tools\run_all_executor_v9.py ^
+  tools\run_all_cancellation_v1.py ^
+  tools\run_all_cancel_ui_v1.py ^
   tools\fragmenter_release_experience_v1.py ^
   tools\fragmenter_visual_runtime_v6.py ^
   tools\ccsf_textured_scene_v9.py ^
@@ -50,7 +52,8 @@ py -3 -m pytest -q ^
   --basetemp="%PYTEST_BASETEMP%" ^
   tests\test_fragmenter_current_release.py ^
   tests\test_frozen_run_all_release.py ^
-  tests\test_fragmenter_release_experience_v1.py
+  tests\test_fragmenter_release_experience_v1.py ^
+  tests\test_run_all_cancellation_v1.py
 if errorlevel 1 goto :failed
 
 if exist "%PYTEST_BASETEMP%" rmdir /s /q "%PYTEST_BASETEMP%"
