@@ -8,6 +8,7 @@ TOOLS = ROOT / "tools"
 if str(TOOLS) not in sys.path:
     sys.path.insert(0, str(TOOLS))
 
+import build_fragmenter_release
 import fragmenter_public_gui_v54 as gui_v54
 import fragmenter_release_experience_v1 as release
 
@@ -91,6 +92,24 @@ def test_missing_wink_does_not_stop_intro_schedule(monkeypatch) -> None:
     assert len(scheduled) == 7
     assert scheduled[-1][0] == release.gui_v99.INTRO_TAVERN_GATE_MS
     assert any("INTRO CONTINUING" in line for line in console)
+
+
+def test_release_builder_requires_and_bundles_celdra_assets() -> None:
+    required = build_fragmenter_release._required_celdra_assets(ROOT)
+    assert required
+    assert all(path.is_file() for path in required)
+    assert ROOT / "assets" / "celdra" / "manifest.json" in required
+    assert ROOT / "assets" / "celdra" / "avatar" / "01.gif" in required
+
+    command = build_fragmenter_release.pyinstaller_command(
+        ROOT,
+        ROOT / "runtime" / build_fragmenter_release.BRIDGE_NAME,
+    )
+    assert "fragmenter_release_experience_v1" in command
+    assert any(
+        value.endswith(f"assets{build_fragmenter_release.os.pathsep}assets")
+        for value in command
+    )
 
 
 def test_launcher_installs_release_experience() -> None:
