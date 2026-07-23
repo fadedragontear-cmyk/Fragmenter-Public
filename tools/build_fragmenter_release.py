@@ -17,6 +17,12 @@ APP_NAME = "Fragmenter.exe"
 PACKAGE_NAME = "Fragmenter-Windows-x64"
 BRAND_PNG_NAME = "Fragmenter-Serenial.png"
 BRAND_ICO_NAME = "Fragmenter.ico"
+RELEASE_RUNTIME_MODULES = (
+    "fragmenter_release_experience_v1",
+    "operation_dragonegg_v1",
+    "run_all_cancellation_v1",
+    "run_all_cancel_ui_v1",
+)
 VISUAL_RUNTIME_MODULES = (
     "fragmenter_visual_runtime_v6",
     "ccsf_textured_scene_v9",
@@ -79,8 +85,6 @@ def pyinstaller_command(root: Path, bridge: Path) -> list[str]:
         "--paths",
         str(root / "tools"),
         "--hidden-import",
-        "fragmenter_release_experience_v1",
-        "--hidden-import",
         "fragmenter_public_gui_v127",
         "--hidden-import",
         "fragment_4_builder_v127",
@@ -95,7 +99,7 @@ def pyinstaller_command(root: Path, bridge: Path) -> list[str]:
         "--hidden-import",
         "tellipatch_resource_v122",
     ]
-    for module in VISUAL_RUNTIME_MODULES:
+    for module in (*RELEASE_RUNTIME_MODULES, *VISUAL_RUNTIME_MODULES):
         command.extend(("--hidden-import", module))
     command.extend(
         (
@@ -131,6 +135,10 @@ def _clean_path(path: Path) -> None:
         path.unlink()
 
 
+def _required_runtime_modules(root: Path) -> tuple[Path, ...]:
+    return tuple(root / "tools" / f"{module}.py" for module in RELEASE_RUNTIME_MODULES)
+
+
 def _required_celdra_assets(root: Path) -> tuple[Path, ...]:
     celdra = root / "assets" / "celdra"
     manifest_path = celdra / "manifest.json"
@@ -157,6 +165,7 @@ def _write_release_readme(path: Path) -> None:
     path.write_text(
         "Fragmenter 1.0 - Windows x64\n"
         "=================================================\n\n"
+        "Current cut: OPERATION DRAGONEGG\n\n"
         "Run Fragmenter.exe. Python, .NET, ImgBurn, Tellipatch, and "
         "FragmentUpdater are not required at runtime.\n\n"
         "Project Setup defaults to a project folder beside Fragmenter.exe. ISO, "
@@ -189,7 +198,6 @@ def build_release(root: Path) -> dict[str, str | int]:
         root / "fragmenter_public.py",
         root / "THIRD_PARTY_NOTICES.md",
         root / "tools" / "iso_patch_dispatcher.py",
-        root / "tools" / "fragmenter_release_experience_v1.py",
         root / "tools" / "fragmenter_public_gui_v127.py",
         root / "tools" / "fragment_4_builder_v127.py",
         root / "tools" / "fragmenter_public_gui_v126.py",
@@ -204,6 +212,7 @@ def build_release(root: Path) -> dict[str, str | int]:
         root / "tools" / "vcdiff_decoder.py",
         root / "tools" / "netslum_completion_v124.py",
         root / "tools" / "pcsx2_setup.py",
+        *_required_runtime_modules(root),
         *(root / "tools" / f"{module}.py" for module in VISUAL_RUNTIME_MODULES),
         root / "resources" / "Fragment-Network.ps2.gz",
         root / "resources" / "Tellipatch-gamelines.csv.gz",
