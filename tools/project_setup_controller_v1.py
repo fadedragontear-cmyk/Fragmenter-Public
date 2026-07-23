@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import json
+import sys
+import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -44,6 +46,19 @@ class SetupRow:
         }
 
 
+def _stable_workspace_path(workspace_dir: str | Path) -> Path:
+    workspace = Path(workspace_dir).expanduser().resolve()
+    if bool(getattr(sys, "frozen", False)):
+        temporary = Path(tempfile.gettempdir()).resolve()
+        if workspace == temporary or temporary in workspace.parents:
+            raise ValueError(
+                "The Project workspace cannot be inside Windows Temp. Extract the "
+                "Fragmenter ZIP to a normal folder, then choose a permanent workspace "
+                "with Browse. Do not run Fragmenter.exe from inside the ZIP."
+            )
+    return workspace
+
+
 def create_setup_project(
     workspace_dir: str | Path,
     *,
@@ -53,7 +68,7 @@ def create_setup_project(
     memory_card_path: str | Path,
 ) -> FragmenterProjectV1:
     project = create_project(
-        workspace_dir,
+        _stable_workspace_path(workspace_dir),
         iso_path=iso_path,
         area_server_root=area_server_root,
         server_save_dir=server_save_dir,
