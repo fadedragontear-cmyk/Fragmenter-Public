@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Any
 import tkinter as tk
 
-import fragmenter_public_gui_v63 as gui_v63
+import fragmenter_public_gui_v127 as gui_v127
 import fragmenter_release_experience_v1 as release_experience
 
 
@@ -31,10 +31,13 @@ _SUPPRESSED_TIMELINE_CUES = {
 }
 
 _INSTALLED = False
-_ORIGINAL_BEGIN_TIMELINE = gui_v63.PublicFragmenterAppV63._begin_first_run_timeline_v51
-_ORIGINAL_EMIT_TIMELINE = gui_v63.PublicFragmenterAppV63._emit_timeline_event_v51
-_ORIGINAL_TICK_ENERGY = gui_v63.PublicFragmenterAppV63._tick_energy_hatch_v63
-_ORIGINAL_REDRAW = gui_v63.PublicFragmenterAppV63._redraw_celdra_avatar_v50
+_ACTIVE_APP = gui_v127.PublicFragmenterAppV127
+# Capture the effective methods from the final public class. This remains correct even
+# when an intermediate GUI pass overrides V63's implementation later in the MRO.
+_ORIGINAL_BEGIN_TIMELINE = _ACTIVE_APP._begin_first_run_timeline_v51
+_ORIGINAL_EMIT_TIMELINE = _ACTIVE_APP._emit_timeline_event_v51
+_ORIGINAL_TICK_ENERGY = _ACTIVE_APP._tick_energy_hatch_v63
+_ORIGINAL_REDRAW = _ACTIVE_APP._redraw_celdra_avatar_v50
 
 
 def _initialize_final_cut_state(self: Any) -> None:
@@ -58,7 +61,8 @@ def _reset_final_cut(self: Any) -> None:
 
 
 def _baby_dragon_path(self: Any) -> Path:
-    root = Path(getattr(self, "celdra_asset_root_v50", release_experience.celdra_asset_root()))
+    selected = getattr(self, "celdra_asset_root_v50", None)
+    root = Path(selected) if selected else release_experience.celdra_asset_root()
     return root / BABY_DRAGON_RELATIVE
 
 
@@ -90,7 +94,7 @@ def _load_exact_baby_dragon(self: Any) -> list[tk.PhotoImage]:
         return []
 
     self._operation_dragonegg_baby_frames_v1 = frames
-    # Keep the inherited cache coherent for test controls and any later replay.
+    # Keep inherited test controls and replays on the exact same canonical sequence.
     self._celdra_hatch_gif_frames_v63 = frames
     return frames
 
@@ -209,7 +213,7 @@ def _redraw_celdra_final(self: Any) -> None:
     external = getattr(self, "celdra_current_external_v50", None)
     takeover = bool(getattr(self, "_celdra_takeover_active_v58", False))
 
-    # The V58 takeover renderer applies the dragongirl's vertical entrance offset.
+    # The inherited takeover renderer applies the dragongirl's vertical entrance offset.
     if takeover and external is not None:
         _ORIGINAL_REDRAW(self)
         return
@@ -235,12 +239,11 @@ def install() -> None:
     global _INSTALLED
     if _INSTALLED:
         return
-    cls = gui_v63.PublicFragmenterAppV63
-    cls._begin_first_run_timeline_v51 = _begin_first_run_timeline_final
-    cls._emit_timeline_event_v51 = _emit_timeline_event_final
-    cls._begin_hatch_gif_v63 = _begin_hatch_gif_final
-    cls._tick_energy_hatch_v63 = _tick_energy_hatch_final
-    cls._redraw_celdra_avatar_v50 = _redraw_celdra_final
+    _ACTIVE_APP._begin_first_run_timeline_v51 = _begin_first_run_timeline_final
+    _ACTIVE_APP._emit_timeline_event_v51 = _emit_timeline_event_final
+    _ACTIVE_APP._begin_hatch_gif_v63 = _begin_hatch_gif_final
+    _ACTIVE_APP._tick_energy_hatch_v63 = _tick_energy_hatch_final
+    _ACTIVE_APP._redraw_celdra_avatar_v50 = _redraw_celdra_final
     _INSTALLED = True
 
 
