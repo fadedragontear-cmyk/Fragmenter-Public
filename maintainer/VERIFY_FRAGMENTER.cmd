@@ -33,11 +33,22 @@ py -3 -m py_compile ^
   tools\build_fragmenter_release.py
 if errorlevel 1 goto :failed
 
+set "PYTEST_BASETEMP=%CD%\build\pytest-current-release"
+if exist "%PYTEST_BASETEMP%" rmdir /s /q "%PYTEST_BASETEMP%"
+mkdir "%PYTEST_BASETEMP%" >nul 2>nul
+if errorlevel 1 (
+  echo Could not create the local pytest workspace:
+  echo %PYTEST_BASETEMP%
+  goto :failed
+)
+
 py -3 -m pytest -q ^
+  --basetemp="%PYTEST_BASETEMP%" ^
   tests\test_fragmenter_current_release.py ^
   tests\test_frozen_run_all_release.py
 if errorlevel 1 goto :failed
 
+if exist "%PYTEST_BASETEMP%" rmdir /s /q "%PYTEST_BASETEMP%"
 echo.
 echo Fragmenter 1.0 current-release validation passed.
 pause
@@ -46,5 +57,6 @@ exit /b 0
 :failed
 echo.
 echo Fragmenter 1.0 current-release validation failed. Review the output above.
+echo Any pytest temporary files are under build\pytest-current-release.
 pause
 exit /b 1
