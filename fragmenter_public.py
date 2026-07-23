@@ -2,10 +2,19 @@
 """Launch Fragmenter 1.0."""
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
+APPLICATION_ROOT = Path(sys.executable).resolve().parent if bool(getattr(sys, "frozen", False)) else ROOT
+# Gremlin progression belongs to this checkout or extracted release. A one-file EXE
+# must never share presentation memory through its changing Windows Temp location.
+os.environ.setdefault(
+    "FRAGMENTER_STATE_ROOT",
+    str(APPLICATION_ROOT / ".fragmenter_state"),
+)
+
 TOOLS = ROOT / "tools"
 if str(TOOLS) not in sys.path:
     sys.path.insert(0, str(TOOLS))
@@ -51,6 +60,13 @@ install_release_experience()
 from operation_dragonegg_v1 import install as install_operation_dragonegg  # noqa: E402
 
 install_operation_dragonegg()
+
+# Celdra's containment override owns the final Gremlin narrative and reward surface.
+from celdra_containment_override_v1 import (  # noqa: E402
+    install as install_celdra_containment_override,
+)
+
+install_celdra_containment_override()
 
 from fragmenter_public_gui_v127 import main  # noqa: E402
 from run_all_cancel_ui_v1 import install as install_run_all_cancel_ui  # noqa: E402
