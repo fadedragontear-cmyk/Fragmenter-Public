@@ -18,7 +18,8 @@ def _append_console(self: Any, text: str) -> None:
     if callable(callback):
         try:
             callback(text)
-        except (AttributeError, tk.TclError):
+        except Exception:
+            # Presentation must never interfere with the cancellation signal.
             pass
 
 
@@ -51,14 +52,14 @@ def _show_celdra_acknowledgement(self: Any, *, complete: bool) -> None:
         try:
             runtime_pose(pose, text)
             return
-        except (AttributeError, tk.TclError):
+        except Exception:
             pass
 
     bubble = getattr(self, "_show_speech_bubble_v58", None)
     if callable(bubble):
         try:
             bubble(text)
-        except (AttributeError, tk.TclError):
+        except Exception:
             pass
 
 
