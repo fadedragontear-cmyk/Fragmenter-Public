@@ -51,10 +51,12 @@ def _show_celdra_acknowledgement(self: Any, *, complete: bool) -> None:
     if callable(runtime_pose):
         try:
             runtime_pose(pose, text)
-            return
         except Exception:
             pass
 
+    # Draw the same message directly as well. A missing reaction image can make the
+    # runtime pose return without showing its bubble, but cancellation still needs a
+    # visible Celdra acknowledgement.
     bubble = getattr(self, "_show_speech_bubble_v58", None)
     if callable(bubble):
         try:
