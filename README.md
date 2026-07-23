@@ -8,6 +8,15 @@ workbench for .hack//frägment
 The source launcher and packaged Windows build share one first-run presentation,
 asset path, cancellation policy, and in-process 3D runtime.
 
+### Celdra's unauthorized maintenance notes
+
+- `INITIALIZED` and `ONLINE` are synchronized to the whiteout and fade into the console.
+- Both consoles are forced back to their recorded palettes after the hatch.
+- The Gremlin prologue is an introduction queue, not collection credit.
+- The secret Celdra tab remains hidden until all nine Gremlins are genuinely contained.
+- The completed 9/9 gallery renders every Gremlin live from the same vector designs used by the stable.
+- Packaged progression is stored beside the extracted release instead of Windows Temp.
+
 ## Start Fragmenter
 
 From a clean checkout, double-click:
