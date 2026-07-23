@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="990" viewBox="0 0 780 990" role="img" aria-labelledby="title desc">
+  <title id="title">Celdra Gremlin Roster V102</title>
+  <desc id="desc">Standalone vector roster for BYTE, HEX, CACHE, LOOP, PING, PATCH, ROOT, NULL, and GLITCH.</desc>
+  <defs>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#000" flood-opacity=".55"/></filter>
+    <style>
+      .o{stroke:#05080d;stroke-width:5;stroke-linejoin:round;stroke-linecap:round}
+      .t{font:700 25px 'DejaVu Sans Mono',monospace;text-anchor:middle;paint-order:stroke;stroke:#07101a;stroke-width:2.5px}
+      .r{font:17px 'DejaVu Sans',sans-serif;text-anchor:middle;fill:#d6e3f1}
+      .eye{fill:#fff;stroke:#05080d;stroke-width:3}
+      .pupil{fill:#172131}
+      .horn{fill:#f2d8a6;stroke:#05080d;stroke-width:5}
+    </style>
+    <g id="dragon">
+      <path class="o" d="M-45 38 L-94 -10 L-82 58 Z" fill="var(--dark)"/><path class="o" d="M45 38 L94 -10 L82 58 Z" fill="var(--dark)"/>
+      <ellipse class="o" cx="0" cy="55" rx="76" ry="61" fill="var(--dark)"/><ellipse cx="0" cy="55" rx="66" ry="53" fill="var(--accent)"/>
+      <ellipse class="o" cx="0" cy="70" rx="31" ry="37" fill="var(--light)"/>
+      <ellipse class="o" cx="-48" cy="103" rx="23" ry="13" fill="var(--accent)"/><ellipse class="o" cx="48" cy="103" rx="23" ry="13" fill="var(--accent)"/>
+      <ellipse class="o" cx="0" cy="-20" rx="65" ry="52" fill="var(--dark)"/><ellipse cx="0" cy="-20" rx="56" ry="44" fill="var(--accent)"/>
+      <path class="horn" d="M-40 -48 L-61 -86 L-18 -65 Z"/><path class="horn" d="M40 -48 L61 -86 L18 -65 Z"/>
+      <ellipse class="o" cx="0" cy="-4" rx="34" ry="18" fill="var(--light)"/>
+      <ellipse class="eye" cx="-27" cy="-29" rx="13" ry="16"/><ellipse class="eye" cx="27" cy="-29" rx="13" ry="16"/>
+      <ellipse class="pupil" cx="-27" cy="-27" rx="5" ry="8"/><ellipse class="pupil" cx="27" cy="-27" rx="5" ry="8"/>
+      <circle cx="-25" cy="-31" r="2.5" fill="#fff"/><circle cx="29" cy="-31" r="2.5" fill="#fff"/>
+      <path d="M-9 7 Q0 14 9 7" fill="none" stroke="#121019" stroke-width="4" stroke-linecap="round"/>
+      <path d="M-55 49 L-83 70 M55 49 L83 70" fill="none" stroke="var(--dark)" stroke-width="12" stroke-linecap="round"/>
+      <circle cx="-83" cy="70" r="7" fill="var(--light)" stroke="#05080d" stroke-width="3"/><circle cx="83" cy="70" r="7" fill="var(--light)" stroke="#05080d" stroke-width="3"/>
+    </g>
+  </defs>
+
+  <g transform="translate(130 120)" style="--accent:#64d8ff;--dark:#07506a;--light:#bdf4ff" filter="url(#shadow)"><g transform="scale(1.14 .94)"><use href="#dragon"/></g><path class="o" d="M60 -2 H107 V25 H87 l-8 10 -2-10 H60 Z" fill="#f7fcff"/><path d="M91 -5 h19 v16 l-9-7 -10 7z" fill="#10151d"/></g><text class="t" x="130" y="270" fill="#bdf4ff">BYTE</text><text class="r" x="130" y="305">tooltip eater</text>
+
+  <g transform="translate(390 120)" style="--accent:#b87cff;--dark:#4b246f;--light:#ead7ff" filter="url(#shadow)"><g transform="scale(.82 1.18)"><use href="#dragon"/></g><text x="0" y="75" text-anchor="middle" font-family="monospace" font-size="22" font-weight="700" fill="#4b246f">0x</text><path d="M65 24 h20 M65 46 h31 M65 68 h20" stroke="#ead7ff" stroke-width="4"/></g><text class="t" x="390" y="270" fill="#ead7ff">HEX</text><text class="r" x="390" y="305">offset tracker</text>
+
+  <g transform="translate(650 120)" style="--accent:#ffbf63;--dark:#70420b;--light:#ffe8bf" filter="url(#shadow)"><use href="#dragon"/><path d="M-32 28 L55 68" stroke="#5a3510" stroke-width="7"/><rect class="o" x="43" y="55" width="48" height="43" rx="5" fill="#9a642b"/><rect x="48" y="39" width="12" height="28" fill="#fff7d0" stroke="#6a5a31"/><rect x="62" y="35" width="12" height="32" fill="#fff7d0" stroke="#6a5a31"/><rect x="76" y="41" width="12" height="26" fill="#fff7d0" stroke="#6a5a31"/></g><text class="t" x="650" y="270" fill="#ffe8bf">CACHE</text><text class="r" x="650" y="305">log hoarder</text>
+
+  <g transform="translate(130 450)" style="--accent:#ff78bc;--dark:#781b51;--light:#ffd0e9" filter="url(#shadow)"><g transform="scale(.88 .92)"><use href="#dragon"/></g><path class="o" d="M-3 -87 L-39 -101 L-35 -70 Z" fill="#ff78bc"/><path class="o" d="M3 -87 L39 -101 L35 -70 Z" fill="#ff78bc"/><circle cx="0" cy="-89" r="11" fill="#ffd0e9" stroke="#5c163f" stroke-width="3"/><path d="M58 58 C112 76 105 16 67 27" fill="none" stroke="#781b51" stroke-width="14" stroke-linecap="round"/><path d="M58 58 C112 76 105 16 67 27" fill="none" stroke="#ff78bc" stroke-width="5"/></g><text class="t" x="130" y="600" fill="#ffd0e9">LOOP</text><text class="r" x="130" y="635">route repeater</text>
+
+  <g transform="translate(390 450)" style="--accent:#63f0c8;--dark:#0b6550;--light:#caffef" filter="url(#shadow)"><g transform="scale(.9 1.08)"><use href="#dragon"/></g><path d="M-47 88 l-10 8 10 8 -10 8 M47 88 l10 8 -10 8 10 8" stroke="#caffef" stroke-width="4" fill="none"/><rect class="o" x="-39" y="51" width="78" height="16" rx="4" fill="#062d25"/><rect x="-35" y="55" width="50" height="8" fill="#caffef"/></g><text class="t" x="390" y="600" fill="#caffef">PING</text><text class="r" x="390" y="635">progress-bar percussion</text>
+
+  <g transform="translate(650 450)" style="--accent:#ffe06e;--dark:#7b5b00;--light:#fff6c3" filter="url(#shadow)"><g transform="scale(1.12 .96)"><use href="#dragon"/></g><rect class="o" x="14" y="-55" width="43" height="14" fill="#fff6c3"/><path d="M-72 77 L-40 28" stroke="#d9e1e8" stroke-width="9"/><path d="M-48 20 A17 17 0 1 1 -28 38" fill="none" stroke="#d9e1e8" stroke-width="7"/></g><text class="t" x="650" y="600" fill="#fff6c3">PATCH</text><text class="r" x="650" y="635">unauthorized fixer</text>
+
+  <g transform="translate(130 780)" style="--accent:#4c9cff;--dark:#173b79;--light:#c8ddff" filter="url(#shadow)"><g transform="scale(1.08 1.03)"><use href="#dragon"/></g><path class="o" d="M-34 -82 L-27 -108 L-7 -90 L6 -112 L27 -90 L35 -108 L38 -82 Z" fill="#ffe06e"/><path class="o" d="M-65 30 L-89 101 L4 86 Z" fill="#173b79"/></g><text class="t" x="130" y="930" fill="#c8ddff">ROOT</text><text class="r" x="130" y="965">party administrator</text>
+
+  <g transform="translate(390 780)" style="--accent:#d4e3f1;--dark:#4d5966;--light:#ffffff" filter="url(#shadow)"><g transform="scale(.82 .85)"><use href="#dragon"/></g><ellipse cx="0" cy="-20" rx="65" ry="57" fill="none" stroke="#fff" stroke-width="4" stroke-dasharray="7 7"/><text x="66" y="76" font-family="monospace" font-size="34" font-weight="700" fill="#fff">?</text></g><text class="t" x="390" y="930" fill="#fff">NULL</text><text class="r" x="390" y="965">vanishing process</text>
+
+  <g transform="translate(650 780)" style="--accent:#ff596f;--dark:#781522;--light:#ffd1d7" filter="url(#shadow)"><g transform="scale(.96 1.02)"><use href="#dragon"/></g><path d="M18 -70 L43 -116" stroke="#ffd1d7" stroke-width="5"/><circle cx="47" cy="-122" r="8" fill="#ff596f" stroke="#05080d" stroke-width="3"/><rect x="-82" y="24" width="50" height="7" fill="#ffd1d7"/><rect x="-82" y="42" width="70" height="7" fill="#ff596f"/><rect x="-82" y="60" width="38" height="7" fill="#ffd1d7"/><path d="M-66 -62 H77" stroke="#ff8a98" stroke-width="6" stroke-dasharray="20 8"/><path d="M58 55 L112 36 L82 78 L124 72" fill="none" stroke="#781522" stroke-width="14" stroke-linecap="round"/><path d="M58 55 L112 36 L82 78 L124 72" fill="none" stroke="#ff596f" stroke-width="5"/></g><text class="t" x="650" y="930" fill="#ffd1d7">GLITCH</text><text class="r" x="650" y="965">status duplicator</text>
+</svg>

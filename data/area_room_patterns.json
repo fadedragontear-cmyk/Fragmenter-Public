@@ -1,0 +1,22 @@
+{
+  "description": "Candidate Area Server room-pattern research notes. Entries are intentionally scan/report oriented and should be treated as hypotheses until verified against more samples.",
+  "candidate_notes": [
+    { "name": "room number/order", "status": "candidate", "notes": "Possible room index or traversal/order field." },
+    { "name": "room coordinates/rotation", "status": "candidate", "notes": "Possible room placement and orientation fields." },
+    { "name": "room type", "status": "candidate", "notes": "Possible room archetype/type identifier." },
+    { "name": "possible portals/gimmick count", "status": "candidate", "notes": "Possible count or related fields for portals and gimmicks associated with a room." },
+    { "name": "gimmick count/type/coordinates/rotation/attribute field", "status": "candidate", "notes": "Possible per-gimmick structure containing count, type, position, rotation, and an attribute or flags field." },
+    { "name": "enemy type/amount", "status": "candidate", "notes": "Possible enemy identifier and spawn/count fields." },
+    { "name": "chest item ID", "status": "candidate", "notes": "Possible item ID stored for chest rewards." }
+  ],
+  "known_gimmick_examples": [
+    { "byte": "0F", "label": "enemy" },
+    { "byte": "29", "label": "Gott statue" },
+    { "byte": "00", "label": "normal chest" },
+    { "byte": "01", "label": "evil chest" }
+  ],
+  "uncertain_candidates": [
+    { "name": "protected area candidate", "bytes": "C8 C6 69 04 00", "status": "uncertain" },
+    { "name": "Virus Core candidate", "bytes": "00 00 00 00", "status": "uncertain" }
+  ]
+}

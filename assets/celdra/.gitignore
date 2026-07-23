@@ -1,0 +1,3 @@
+# Celdra PNG and GIF files are intentional bundled application assets.
+# Do not add image ignore rules here; source checkouts and packaged builds should
+# include the same artwork without requiring a separate user-side install step.

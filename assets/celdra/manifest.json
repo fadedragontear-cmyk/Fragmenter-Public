@@ -1,0 +1,323 @@
+{
+  "version": 1,
+  "states": {},
+  "metadata": {
+    "description": "User-classified Celdra dragongirl reaction crops.",
+    "source_preservation": "Original sprite sheets remain unchanged; crops are resolved at runtime or exported explicitly.",
+    "classified_date": "2026-07-16"
+  },
+  "emotes": [
+    {
+      "id": "celdra-cool",
+      "source": "avatar/1000032852-removebg5.png",
+      "state": "cool",
+      "pose": "Cool",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 200,
+        "height": 240
+      },
+      "tags": [
+        "cool",
+        "confident",
+        "reaction",
+        "dragongirl"
+      ],
+      "notes": "Cool/confident reaction.",
+      "output": "generated_emotes/cool/celdra-cool.png",
+      "enabled": true
+    },
+    {
+      "id": "celdra-confused",
+      "source": "avatar/1000032852-removebg6.png",
+      "state": "confused",
+      "pose": "Confused",
+      "crop": {
+        "x": 640,
+        "y": 4,
+        "width": 208,
+        "height": 253
+      },
+      "tags": [
+        "confused",
+        "thinking",
+        "reaction",
+        "dragongirl"
+      ],
+      "notes": "",
+      "output": "generated_emotes/confused/celdra-confused.png",
+      "enabled": true
+    },
+    {
+      "id": "celdra-love",
+      "source": "avatar/1000032852-removebg6.png",
+      "state": "love",
+      "pose": "Love",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 218,
+        "height": 256
+      },
+      "tags": [
+        "love",
+        "affection",
+        "reaction",
+        "dragongirl"
+      ],
+      "notes": "",
+      "output": "generated_emotes/love/celdra-love.png",
+      "enabled": true
+    },
+    {
+      "id": "celdra-shy",
+      "source": "avatar/1000032852-removebg6.png",
+      "state": "shy",
+      "pose": "Shy",
+      "crop": {
+        "x": 208,
+        "y": 50,
+        "width": 218,
+        "height": 207
+      },
+      "tags": [
+        "shy",
+        "embarrassed",
+        "reaction",
+        "dragongirl"
+      ],
+      "notes": "",
+      "output": "generated_emotes/shy/celdra-shy.png",
+      "enabled": true
+    },
+    {
+      "id": "celdra-angry",
+      "source": "avatar/1000032852-removebg7.png",
+      "state": "angry",
+      "pose": "Angry",
+      "crop": {
+        "x": 10,
+        "y": 0,
+        "width": 200,
+        "height": 262
+      },
+      "tags": [
+        "angry",
+        "reaction",
+        "dragongirl"
+      ],
+      "notes": "",
+      "output": "generated_emotes/angry/celdra-angry.png",
+      "enabled": true
+    },
+    {
+      "id": "celdra-suspicious",
+      "source": "avatar/1000032852-removebg7.png",
+      "state": "suspicious",
+      "pose": "Suspicious",
+      "crop": {
+        "x": 226,
+        "y": 10,
+        "width": 194,
+        "height": 256
+      },
+      "tags": [
+        "suspicious",
+        "skeptical",
+        "reaction",
+        "dragongirl"
+      ],
+      "notes": "",
+      "output": "generated_emotes/suspicious/celdra-suspicious.png",
+      "enabled": true
+    },
+    {
+      "id": "celdra-unenthused",
+      "source": "avatar/1000032852-removebg7.png",
+      "state": "unenthused",
+      "pose": "Unenthused",
+      "crop": {
+        "x": 648,
+        "y": 0,
+        "width": 200,
+        "height": 264
+      },
+      "tags": [
+        "unenthused",
+        "annoyed",
+        "reaction",
+        "dragongirl"
+      ],
+      "notes": "",
+      "output": "generated_emotes/unenthused/celdra-unenthused.png",
+      "enabled": true
+    },
+    {
+      "id": "celdra-wink",
+      "source": "avatar/1000032852-removebg7.png",
+      "state": "wink",
+      "pose": "Wink",
+      "crop": {
+        "x": 436,
+        "y": 2,
+        "width": 198,
+        "height": 260
+      },
+      "tags": [
+        "wink",
+        "playful",
+        "reaction",
+        "dragongirl"
+      ],
+      "notes": "",
+      "output": "generated_emotes/wink/celdra-wink.png",
+      "enabled": true
+    },
+    {
+      "id": "celdra-neutral-default",
+      "source": "avatar/1000032852-removebg8.png",
+      "state": "neutral",
+      "pose": "Default",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "width": 200,
+        "height": 248
+      },
+      "tags": [
+        "default",
+        "reaction",
+        "dragongirl"
+      ],
+      "notes": "Primary neutral/default Celdra portrait.",
+      "output": "generated_emotes/neutral/celdra-neutral-default.png",
+      "enabled": true
+    },
+    {
+      "id": "celdra-sad",
+      "source": "avatar/1000032852-removebg8.png",
+      "state": "sad",
+      "pose": "Sad",
+      "crop": {
+        "x": 652,
+        "y": 0,
+        "width": 196,
+        "height": 246
+      },
+      "tags": [
+        "sad",
+        "reaction",
+        "dragongirl"
+      ],
+      "notes": "",
+      "output": "generated_emotes/sad/celdra-sad.png",
+      "enabled": true
+    },
+    {
+      "id": "celdra-smile",
+      "source": "avatar/1000032852-removebg8.png",
+      "state": "smile",
+      "pose": "Smile",
+      "crop": {
+        "x": 230,
+        "y": 0,
+        "width": 190,
+        "height": 244
+      },
+      "tags": [
+        "smile",
+        "happy",
+        "reaction",
+        "dragongirl"
+      ],
+      "notes": "",
+      "output": "generated_emotes/smile/celdra-smile.png",
+      "enabled": true
+    },
+    {
+      "id": "celdra-yawn",
+      "source": "avatar/1000032854-removebg6.png",
+      "state": "yawn",
+      "pose": "Yawn",
+      "crop": {
+        "x": 222,
+        "y": 8,
+        "width": 206,
+        "height": 230
+      },
+      "tags": [
+        "yawn",
+        "sleepy",
+        "reaction",
+        "dragongirl"
+      ],
+      "notes": "",
+      "output": "generated_emotes/yawn/celdra-yawn.png",
+      "enabled": true
+    },
+    {
+      "id": "celdra-excited",
+      "source": "avatar/1000032854-removebg7.png",
+      "state": "excited",
+      "pose": "Excited",
+      "crop": {
+        "x": 222,
+        "y": 10,
+        "width": 202,
+        "height": 252
+      },
+      "tags": [
+        "excited",
+        "happy",
+        "reaction",
+        "dragongirl"
+      ],
+      "notes": "",
+      "output": "generated_emotes/excited/celdra-excited.png",
+      "enabled": true
+    },
+    {
+      "id": "celdra-laugh",
+      "source": "avatar/1000032854-removebg7.png",
+      "state": "laugh",
+      "pose": "Laugh",
+      "crop": {
+        "x": 10,
+        "y": 8,
+        "width": 204,
+        "height": 258
+      },
+      "tags": [
+        "laugh",
+        "happy",
+        "reaction",
+        "dragongirl"
+      ],
+      "notes": "",
+      "output": "generated_emotes/laugh/celdra-laugh.png",
+      "enabled": true
+    },
+    {
+      "id": "celdra-shocked",
+      "source": "avatar/1000032854-removebg7.png",
+      "state": "shocked",
+      "pose": "Shocked",
+      "crop": {
+        "x": 650,
+        "y": 12,
+        "width": 198,
+        "height": 254
+      },
+      "tags": [
+        "shocked",
+        "surprised",
+        "reaction",
+        "dragongirl"
+      ],
+      "notes": "",
+      "output": "generated_emotes/shocked/celdra-shocked.png",
+      "enabled": true
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+
+# Windows release builds
+/build/
+/dist/
+/runtime/
+/Fragmenter.exe
+*.spec
+
+# Installation-local state
+/.fragmenter_state/
+
+# Fragmenter-generated indexes and temporary files
+fragmenter_index.json
+iso_index.json
+resource_map.json
+resource_map.txt
+fragmenter_correlations.json
+fragmenter_gui_settings.json
+_tmp_*.json
+patched.bin
+town_FortOuph_to_assetset*.bin
+*.fragmenter.tmp
+
+# Generated output folders
+/out_sections/
+/iso_extract/
+/snapshots/
+/patches/
+/_fragmenter_backups/
+/converted_assets/
+/workspace/
+/diagnostics/
+/project/
+
+# Generated reports and support packages
+*.fragmenter-acceptance.json
+*.netslum-4.0-completion.zip
+*.netslum-4.0-completion.zip.manifest.json
+*.vs-netslum-4.0.json
+
+# Local game and emulator files
+*.iso
+*.ps2
+*.mcd
+*.mcr

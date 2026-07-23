@@ -1,0 +1,26 @@
+{
+  "description": "Scan-only Area Server executable patch signatures. These signatures are research data for locating candidate checks; they are not instructions to patch automatically.",
+  "signatures": [
+    {
+      "name": "Remove Import Check",
+      "pattern": "8A 4C 28 5C 8A 54 04 70 3A CA 75 42",
+      "replace": "8A 4C 28 5C 8A 54 04 70 3A CA 90 90"
+    },
+    {
+      "name": "Remove MD5 Check",
+      "pattern": "8B 4C 24 10 8A 14 01 8A 4C 04 74 3A D1 75 77",
+      "replace": "8B 4C 24 10 8A 14 01 8A 4C 04 74 3A D1 90 90"
+    },
+    {
+      "name": "Remove Savegame Check",
+      "pattern": "8D 4C 0A 7D 8A 14 01 8A 1C 30 3A D3 75 10",
+      "replace": "8D 4C 0A 7D 8A 14 01 8A 1C 30 3A D3 90 90"
+    }
+  ],
+  "safety_notes": [
+    "Patches must not be applied automatically.",
+    "Any future patcher must scan for candidates and report exact matches before making changes.",
+    "Any future patcher must create a backup before modifying an executable or data file.",
+    "Any future patcher must require explicit user action before applying a replacement."
+  ]
+}

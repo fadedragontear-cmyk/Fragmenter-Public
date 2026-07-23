@@ -1,0 +1,43 @@
+{
+  "description": "Research notes for encrypted .hack//fragment Area Server file families.",
+  "encrypted_file_families": [
+    "savegames",
+    "pack.bin",
+    "text.bin",
+    "onlineevent.dat"
+  ],
+  "file_layout": [
+    {
+      "offset": 0,
+      "length": 16,
+      "name": "filekey",
+      "notes": "First 16 bytes. These bytes are stored in the file and are not encrypted payload bytes."
+    },
+    {
+      "offset": 16,
+      "length": "remaining bytes",
+      "name": "encrypted payload",
+      "notes": "All bytes after the 16-byte filekey are transformed with the filekey and areakey. Formula indexes are relative to this payload, not the absolute file offset."
+    }
+  ],
+  "areakey": [
+    59, 22, 111, 216, 172, 178, 9, 252, 176, 157, 169, 58, 220, 161, 63, 210,
+    69, 23, 17, 3, 251, 89, 94, 33, 211, 122, 65, 232, 106, 52, 217, 16,
+    102, 33, 167, 33, 255, 46, 55, 137, 191, 78, 3, 236, 133, 107, 148, 187,
+    208, 162, 234, 8, 58, 175, 30, 153, 67, 166, 70, 59, 80, 229, 153, 88,
+    244, 70, 212, 204, 109, 153, 220, 245, 114, 81, 164, 9, 44, 125, 81, 173,
+    130, 250, 156, 195, 153, 231, 120, 131, 155, 90, 245, 205, 184, 81, 101, 189,
+    107, 236, 189, 129, 255, 217, 62, 103, 81, 15, 84, 58, 215, 191, 190, 207,
+    225, 135, 239, 219, 31, 234, 180, 7, 100, 253, 24, 71, 169, 98, 133, 103,
+    85, 122, 43, 231, 188, 215, 165, 8, 229, 240, 218, 39, 144, 25, 34, 74,
+    119, 178, 171, 249, 213, 158, 26, 79, 37, 247, 117, 80, 44, 255, 64, 125,
+    57, 90, 230, 166, 172, 123, 91, 0, 181, 93, 0, 119, 94, 115, 199, 69,
+    204, 225, 151, 196, 193, 236, 242, 128, 102, 175, 213, 145, 72, 16, 223, 40,
+    160, 243, 182, 103, 215, 174, 167, 118, 73, 188, 140, 211, 74, 181, 243, 233,
+    102, 125, 124, 229, 237, 188, 131, 197, 176, 143, 255, 177, 5, 126, 170, 143,
+    17, 173, 99, 210, 70, 86, 208, 146, 42, 118, 71, 226, 90, 199, 239, 94,
+    207, 239, 34, 3, 97, 247, 22, 68, 137, 254, 189, 89, 107, 47, 233, 219
+  ],
+  "decrypt_formula": "plain[i] = filekey[i % 16] ^ ((cipher[i] + areakey[i % 256]) & 0xFF)",
+  "encrypt_formula": "cipher[i] = ((filekey[i % 16] ^ plain[i]) - areakey[i % 256]) & 0xFF"
+}

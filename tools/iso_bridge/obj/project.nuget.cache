@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "dgSpecHash": "Eo5hRnYcUEA=",
+  "success": true,
+  "projectFilePath": "C:\\games\\areaserver\\Fragmenter\\tools\\iso_bridge\\Fragmenter.IsoBridge.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\JohnG\\.nuget\\packages\\microsoft.net.illink.tasks\\8.0.29\\microsoft.net.illink.tasks.8.0.29.nupkg.sha512",
+    "C:\\Users\\JohnG\\.nuget\\packages\\ps2isotools\\1.1.2\\ps2isotools.1.1.2.nupkg.sha512",
+    "C:\\Users\\JohnG\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\8.0.29\\microsoft.netcore.app.runtime.win-x64.8.0.29.nupkg.sha512",
+    "C:\\Users\\JohnG\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x64\\8.0.29\\microsoft.windowsdesktop.app.runtime.win-x64.8.0.29.nupkg.sha512",
+    "C:\\Users\\JohnG\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\8.0.29\\microsoft.aspnetcore.app.runtime.win-x64.8.0.29.nupkg.sha512"
+  ],
+  "logs": []
+}

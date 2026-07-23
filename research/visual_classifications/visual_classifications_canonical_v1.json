@@ -1,0 +1,82 @@
+{
+  "asset_files": [
+    "canonical_v2/core.txt"
+  ],
+  "canonized_at": "2026-07-16",
+  "categories": [
+    "Character / NPC",
+    "Effects",
+    "Environment / Field",
+    "Food",
+    "Monster / Boss",
+    "Objects",
+    "Profile Pictures",
+    "Summon / Statue / Entity candidate",
+    "UI / System",
+    "Unknown CCSF",
+    "Wallpaper",
+    "Weapon"
+  ],
+  "category_counts": {
+    "Character / NPC": 360,
+    "Effects": 5,
+    "Environment / Field": 15,
+    "Food": 16,
+    "Monster / Boss": 152,
+    "Objects": 11,
+    "Profile Pictures": 2234,
+    "Summon / Statue / Entity candidate": 11,
+    "UI / System": 7,
+    "Unknown CCSF": 49,
+    "Wallpaper": 58,
+    "Weapon": 356
+  },
+  "classification_rules": [
+    {
+      "category": "Profile Pictures",
+      "description": "Reviewed xp[a,b,h,l,t,w,z]* portrait-family files.",
+      "pattern": "^xp[abhltwz][a-z0-9_]+\\.ccs$"
+    },
+    {
+      "category": "Character / NPC",
+      "description": "Reviewed cw character-body variants; weapon families are excluded by their names.",
+      "pattern": "^cw(?:[13-6][a-i]|2[a-gi])b_(?:bl|br|gr|pp|rd|yl)\\.ccs$"
+    },
+    {
+      "category": "Weapon",
+      "description": "Reviewed heavy-staff, heavy-sword, axe, polearm, katana and knife/sword weapon families.",
+      "pattern": "^(?:cw1h(?:st|sw)[a-z0-9_]*|cw2h(?:ax|pw|kt|sw)[a-z0-9_]*|cwdh(?:kn|sw)[a-z0-9_]*|cw2hb_(?:bl|br|gr|pp|rd|yl))\\.ccs$"
+    },
+    {
+      "category": "Wallpaper",
+      "description": "Reviewed desktop wallpaper family.",
+      "pattern": "^xddwal(?:[0-9]{2}|l[0-2])\\.ccs$"
+    }
+  ],
+  "format": "Fragmenter canonical visual classifications v2",
+  "policy": "Canonical defaults fill missing local fields; project settings, the latest portable ledger and the review sidecar remain newer authorities.",
+  "record_count": 3274,
+  "notes_count": 55,
+  "flagged_count": 33,
+  "camera_count": 45,
+  "state_record_count": 89,
+  "state_files": [
+    "canonical_v2/state_01.json",
+    "canonical_v2/state_02.json",
+    "canonical_v2/state_03.json",
+    "canonical_v2/state_04.json",
+    "canonical_v2/state_05.json",
+    "canonical_v2/state_06.json",
+    "canonical_v2/state_07.json",
+    "canonical_v2/state_08.json"
+  ],
+  "report_backed_corrections": {
+    "particle.ccs": "Effects",
+    "xeffect.ccs": "Effects",
+    "xp_text.ccs": "UI / System"
+  },
+  "source": "User visual classification ledger generated 2026-07-15T23:58:57Z",
+  "source_counts": {
+    "manual": 3274
+  }
+}
