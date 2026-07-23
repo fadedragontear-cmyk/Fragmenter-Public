@@ -18,6 +18,7 @@ import fragmenter_release_experience_v1 as release_experience
 
 BABY_DRAGON_RELATIVE = Path("avatar") / "01.gif"
 WHITEOUT_COMMIT_STEP = 32
+BABY_LATCH_STEP = 33
 INITIALIZED_STEP = 34
 ONLINE_STEP = 38
 BRAIN_REACTION_STEP = 42
@@ -174,8 +175,8 @@ def _request_console_and_hatch_release(self: Any) -> None:
         return
     self._operation_dragonegg_restore_requested_v1 = True
 
-    # V91 normally schedules the dragon reveal when its timeline receives ONLINE.
-    # Operation Dragonegg owns that cue now, so reproduce the same production handoff.
+    # The canonical frames are latched while the whiteout is fully opaque, so V91's
+    # normal release scheduler can now reveal them only after ONLINE is readable.
     hatch_release = getattr(self, "_schedule_hatch_release_v91", None)
     if callable(hatch_release):
         hatch_release(1_250)
@@ -245,6 +246,11 @@ def _tick_energy_hatch_final(self: Any) -> None:
     step = int(getattr(self, "_celdra_energy_step_v63", 0) or 0)
     if step == WHITEOUT_COMMIT_STEP:
         _retire_pixel_egg(self)
+    elif step == BABY_LATCH_STEP and not bool(
+        getattr(self, "_celdra_energy_gif_started_v63", False)
+    ):
+        # Decode/latch work is complete before either dramatic Celdra line appears.
+        _begin_hatch_gif_final(self)
     elif step == INITIALIZED_STEP:
         _emit_energy_cue(self, "initialized", "[CELDRA] INITIALIZED", whiteout=True)
     elif step == ONLINE_STEP:
@@ -255,6 +261,7 @@ def _tick_energy_hatch_final(self: Any) -> None:
     elif step == BABY_HANDOFF_STEP and not bool(
         getattr(self, "_celdra_energy_gif_started_v63", False)
     ):
+        # Safety boundary for a malformed accelerated preview.
         _begin_hatch_gif_final(self)
     elif step == WHITEOUT_FADE_STEP and bool(
         getattr(self, "_celdra_whiteout_active_v89", False)
