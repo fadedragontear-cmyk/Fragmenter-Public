@@ -9,7 +9,7 @@ the whiteout boundary, and owns every post-hatch fallback frame.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 import tkinter as tk
 
 import fragmenter_public_gui_v127 as gui_v127
@@ -36,6 +36,7 @@ _ACTIVE_APP = gui_v127.PublicFragmenterAppV127
 # when an intermediate GUI pass overrides V63's implementation later in the MRO.
 _ORIGINAL_BEGIN_TIMELINE = _ACTIVE_APP._begin_first_run_timeline_v51
 _ORIGINAL_EMIT_TIMELINE = _ACTIVE_APP._emit_timeline_event_v51
+_ORIGINAL_BEGIN_HATCH_GIF = _ACTIVE_APP._begin_hatch_gif_v63
 _ORIGINAL_TICK_ENERGY = _ACTIVE_APP._tick_energy_hatch_v63
 _ORIGINAL_REDRAW = _ACTIVE_APP._redraw_celdra_avatar_v50
 
@@ -49,6 +50,8 @@ def _initialize_final_cut_state(self: Any) -> None:
         self._operation_dragonegg_baby_load_attempted_v1 = False
     if not hasattr(self, "_operation_dragonegg_baby_log_v1"):
         self._operation_dragonegg_baby_log_v1 = False
+    if not hasattr(self, "_operation_dragonegg_restore_requested_v1"):
+        self._operation_dragonegg_restore_requested_v1 = False
     if not hasattr(self, "_fragmenter_celdra_egg_retired_v1"):
         self._fragmenter_celdra_egg_retired_v1 = False
 
@@ -57,6 +60,7 @@ def _reset_final_cut(self: Any) -> None:
     _initialize_final_cut_state(self)
     self._operation_dragonegg_cues_v1.clear()
     self._operation_dragonegg_baby_log_v1 = False
+    self._operation_dragonegg_restore_requested_v1 = False
     self._fragmenter_celdra_egg_retired_v1 = False
 
 
@@ -94,7 +98,7 @@ def _load_exact_baby_dragon(self: Any) -> list[tk.PhotoImage]:
         return []
 
     self._operation_dragonegg_baby_frames_v1 = frames
-    # Keep inherited test controls and replays on the exact same canonical sequence.
+    # Keep inherited production/test controls on the exact same canonical sequence.
     self._celdra_hatch_gif_frames_v63 = frames
     return frames
 
@@ -113,12 +117,84 @@ def _retire_pixel_egg(self: Any) -> None:
     self.celdra_current_pixel_v50 = None
 
 
-def _emit_energy_cue(self: Any, key: str, line: str) -> None:
+def _scaled_delay(self: Any, milliseconds: int) -> int:
+    scale = getattr(self, "_scaled_runtime_ms_v88", None)
+    if callable(scale):
+        try:
+            return max(1, int(scale(milliseconds)))
+        except (TypeError, ValueError):
+            pass
+    return max(1, int(milliseconds))
+
+
+def _schedule_final_cut(self: Any, milliseconds: int, callback: Callable[[], None]) -> None:
+    delay = _scaled_delay(self, milliseconds)
+    remember = getattr(self, "_remember_after_v49", None)
+    if callable(remember):
+        remember(delay, callback)
+        return
+    after = getattr(self, "after", None)
+    if callable(after):
+        after(delay, callback)
+
+
+def _append_whiteout_celdra_cue(self: Any, text: str) -> None:
+    """Use V89's tagged white-to-black line fade while the consoles are white."""
+    fade = getattr(self, "_append_whiteout_celdra_line_v89", None)
+    if callable(fade) and bool(getattr(self, "_celdra_whiteout_active_v89", False)):
+        fade(text)
+        return
+    self._append_console_v49(f"[CELDRA] {text}")
+
+
+def _restore_console_now(self: Any) -> None:
+    if not bool(getattr(self, "_celdra_whiteout_active_v89", False)):
+        return
+    restore = getattr(self, "_start_console_restore_v89", None)
+    if callable(restore):
+        restore()
+        return
+    hard_restore = getattr(self, "_restore_console_palette_v89", None)
+    if callable(hard_restore):
+        hard_restore()
+
+
+def _restore_console_watchdog(self: Any) -> None:
+    """Last-resort palette recovery if a Tk callback was interrupted or superseded."""
+    if not bool(getattr(self, "_celdra_whiteout_active_v89", False)):
+        return
+    hard_restore = getattr(self, "_restore_console_palette_v89", None)
+    if callable(hard_restore):
+        hard_restore()
+
+
+def _request_console_and_hatch_release(self: Any) -> None:
+    _initialize_final_cut_state(self)
+    if self._operation_dragonegg_restore_requested_v1:
+        return
+    self._operation_dragonegg_restore_requested_v1 = True
+
+    # V91 normally schedules the dragon reveal when its timeline receives ONLINE.
+    # Operation Dragonegg owns that cue now, so reproduce the same production handoff.
+    hatch_release = getattr(self, "_schedule_hatch_release_v91", None)
+    if callable(hatch_release):
+        hatch_release(1_250)
+
+    # Let ONLINE remain black against white briefly, then fade both the real pipeline
+    # log and Celdra console back to their exact captured palettes.
+    _schedule_final_cut(self, 850, lambda: _restore_console_now(self))
+    _schedule_final_cut(self, 6_000, lambda: _restore_console_watchdog(self))
+
+
+def _emit_energy_cue(self: Any, key: str, line: str, *, whiteout: bool = False) -> None:
     _initialize_final_cut_state(self)
     if key in self._operation_dragonegg_cues_v1:
         return
     self._operation_dragonegg_cues_v1.add(key)
-    self._append_console_v49(line)
+    if whiteout and line.startswith("[CELDRA] "):
+        _append_whiteout_celdra_cue(self, line.split("] ", 1)[1])
+    else:
+        self._append_console_v49(line)
 
 
 def _begin_first_run_timeline_final(self: Any, speed: float = 1.0) -> None:
@@ -138,8 +214,8 @@ def _emit_timeline_event_final(self: Any, event: Any) -> None:
             str(getattr(event, "text", "") or ""),
         )
         if cue in _SUPPRESSED_TIMELINE_CUES:
-            # These lines are emitted by exact energy-animation steps below. Keeping
-            # them on independent Tk timers caused the EXE cut to deliver them late.
+            # These lines are emitted by exact animation steps below. Independent Tk
+            # timers drift in a one-file EXE when image decoding or layout work occurs.
             return
     if str(getattr(event, "action", "") or "") == "hide_avatar":
         _retire_pixel_egg(self)
@@ -147,7 +223,7 @@ def _emit_timeline_event_final(self: Any, event: Any) -> None:
 
 
 def _begin_hatch_gif_final(self: Any) -> None:
-    """Install the canonical baby dragon under the opaque whiteout."""
+    """Latch the canonical baby dragon into V91's hidden-whiteout reveal pipeline."""
     _initialize_final_cut_state(self)
     self._celdra_energy_gif_started_v63 = True
     _retire_pixel_egg(self)
@@ -156,10 +232,11 @@ def _begin_hatch_gif_final(self: Any) -> None:
         self.celdra_current_external_v50 = None
         self._redraw_celdra_avatar_v50()
         return
-    self._play_external_sequence_v50(frames)
+    self._celdra_hatch_gif_frames_v63 = frames
+    _ORIGINAL_BEGIN_HATCH_GIF(self)
     if not self._operation_dragonegg_baby_log_v1:
         self._operation_dragonegg_baby_log_v1 = True
-        self._append_console_v49("[CORE] CANONICAL BABY DRAGON INSTALLED BEHIND WHITEOUT")
+        self._append_console_v49("[CORE] CANONICAL BABY DRAGON LATCHED BEHIND WHITEOUT")
 
 
 def _tick_energy_hatch_final(self: Any) -> None:
@@ -169,15 +246,21 @@ def _tick_energy_hatch_final(self: Any) -> None:
     if step == WHITEOUT_COMMIT_STEP:
         _retire_pixel_egg(self)
     elif step == INITIALIZED_STEP:
-        _emit_energy_cue(self, "initialized", "[CELDRA] INITIALIZED")
+        _emit_energy_cue(self, "initialized", "[CELDRA] INITIALIZED", whiteout=True)
     elif step == ONLINE_STEP:
-        _emit_energy_cue(self, "online", "[CELDRA] ONLINE")
+        _emit_energy_cue(self, "online", "[CELDRA] ONLINE", whiteout=True)
+        _request_console_and_hatch_release(self)
     elif step == BRAIN_REACTION_STEP:
         _emit_energy_cue(self, "brain-reaction", "[BRAIN] ...OKAY. THAT WAS A LOT.")
     elif step == BABY_HANDOFF_STEP and not bool(
         getattr(self, "_celdra_energy_gif_started_v63", False)
     ):
         _begin_hatch_gif_final(self)
+    elif step == WHITEOUT_FADE_STEP and bool(
+        getattr(self, "_celdra_whiteout_active_v89", False)
+    ):
+        # A deterministic second chance tied to the visual fade boundary.
+        _restore_console_now(self)
     _ORIGINAL_TICK_ENERGY(self)
 
 
