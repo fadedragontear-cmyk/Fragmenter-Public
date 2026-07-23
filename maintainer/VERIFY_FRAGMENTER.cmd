@@ -30,6 +30,7 @@ py -3 -m py_compile ^
   tools\tellipatch_resource_v122.py ^
   tools\netslum_completion_v124.py ^
   tools\run_all_executor_v9.py ^
+  tools\fragmenter_release_experience_v1.py ^
   tools\build_fragmenter_release.py
 if errorlevel 1 goto :failed
 
@@ -45,7 +46,8 @@ if errorlevel 1 (
 py -3 -m pytest -q ^
   --basetemp="%PYTEST_BASETEMP%" ^
   tests\test_fragmenter_current_release.py ^
-  tests\test_frozen_run_all_release.py
+  tests\test_frozen_run_all_release.py ^
+  tests\test_fragmenter_release_experience_v1.py
 if errorlevel 1 goto :failed
 
 if exist "%PYTEST_BASETEMP%" rmdir /s /q "%PYTEST_BASETEMP%"
