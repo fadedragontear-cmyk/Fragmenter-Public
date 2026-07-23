@@ -36,6 +36,12 @@ install_tellipatch_resource()
 import fragmenter_visual_runtime_v6  # noqa: E402,F401
 import visual_asset_annotations_v3  # noqa: E402,F401
 import visual_asset_annotations_v4  # noqa: E402,F401
+from fragmenter_release_experience_v1 import (  # noqa: E402
+    install as install_release_experience,
+)
+
+install_release_experience()
+
 from fragmenter_public_gui_v127 import main  # noqa: E402
 
 
