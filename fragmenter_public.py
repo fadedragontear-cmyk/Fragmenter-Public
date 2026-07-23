@@ -46,6 +46,12 @@ from fragmenter_release_experience_v1 import (  # noqa: E402
 
 install_release_experience()
 
+# Final presentation authority is deliberately installed after packaged-path policy,
+# so source and PyInstaller builds resolve the same canonical baby-dragon and brand assets.
+from operation_dragonegg_v1 import install as install_operation_dragonegg  # noqa: E402
+
+install_operation_dragonegg()
+
 from fragmenter_public_gui_v127 import main  # noqa: E402
 from run_all_cancel_ui_v1 import install as install_run_all_cancel_ui  # noqa: E402
 
