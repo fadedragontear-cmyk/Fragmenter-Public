@@ -1,16 +1,20 @@
 #!/usr/bin/env python3
-"""Patch RUN ALL v8 with final public-list preparation and reliable first-run state."""
+"""Patch RUN ALL v8 for final public preparation and frozen-app execution."""
 from __future__ import annotations
 
+import argparse
 import json
+import sys
 from pathlib import Path
 from typing import Any, Callable
 
+import iso_ccsf_extractor as ccsf_extractor
 import run_all_executor_v1 as base
 import run_all_executor_v8 as v8
 from project_preflight_v1 import require_ready_project
+from project_report_layout_v1 import migrate_report_layout
 from project_sound_v1 import sound_reports_root
-from project_workspace_v1 import FragmenterProjectV1
+from project_workspace_v1 import FragmenterProjectV1, migrate_workspace_layout
 from public_library_cache_v1 import build_public_library_cache, cache_paths, load_cache
 
 _ORIGINAL_BUILD = v8.build_run_all_actions_v8
@@ -18,9 +22,6 @@ _ORIGINAL_INTERNAL = v8._run_internal_v8
 _ORIGINAL_EXECUTE_RUN_ALL = v8.execute_run_all_v8
 _INSTALLED = False
 
-# These are the durable evidence stages that distinguish a completed project run
-# from a partial/aborted run. Project-status and workspace-layout bookkeeping are
-# intentionally omitted because they are rewritten every run.
 FIRST_RUN_REQUIRED_KEYS = (
     "iso_index",
     "ccsf_extract",
@@ -34,6 +35,11 @@ FIRST_RUN_REQUIRED_KEYS = (
     "refresh",
     "public_lists",
 )
+
+_FROZEN_INTERNALS = {
+    "iso_index": "build_iso_index_frozen_v9",
+    "ccsf_extract": "extract_ccsf_frozen_v9",
+}
 
 
 def _with_strict_mixer_fingerprint(action: base.RunAction) -> base.RunAction:
@@ -57,6 +63,21 @@ def _with_strict_mixer_fingerprint(action: base.RunAction) -> base.RunAction:
     )
 
 
+def _with_frozen_safe_execution(action: base.RunAction) -> base.RunAction:
+    """Run bundled CLI stages in-process instead of relaunching Fragmenter.exe."""
+    internal = _FROZEN_INTERNALS.get(action.key)
+    if internal is None or not bool(getattr(sys, "frozen", False)):
+        return action
+    return base.RunAction(
+        action.key,
+        action.label,
+        "internal",
+        internal=internal,
+        inputs=tuple(action.inputs),
+        outputs=tuple(action.outputs),
+    )
+
+
 def build_run_all_actions_v9(
     project: FragmenterProjectV1,
     *,
@@ -64,7 +85,7 @@ def build_run_all_actions_v9(
     tools_dir: str | Path | None = None,
 ) -> list[base.RunAction]:
     actions = [
-        _with_strict_mixer_fingerprint(action)
+        _with_frozen_safe_execution(_with_strict_mixer_fingerprint(action))
         for action in _ORIGINAL_BUILD(
             project,
             python_executable=python_executable,
@@ -89,11 +110,110 @@ def build_run_all_actions_v9(
         ),
         outputs=tuple(str(path) for path in paths.values()),
     )
-    # Public lists consume the final refreshed catalogs, so this stage belongs after
-    # Refresh Public Libraries rather than before it.
-    refresh_index = next((index for index, row in enumerate(actions) if row.key == "refresh"), len(actions) - 1)
+    refresh_index = next(
+        (index for index, row in enumerate(actions) if row.key == "refresh"),
+        len(actions) - 1,
+    )
     actions.insert(min(len(actions), refresh_index + 1), public_lists)
     return actions
+
+
+def _ccsf_progress_v9(
+    callback: Callable[[dict[str, Any]], None] | None,
+    stage: str,
+) -> Callable[[dict[str, Any]], None]:
+    def emit(payload: dict[str, Any]) -> None:
+        if callback is None:
+            return
+        current = int(payload.get("container_index") or 0)
+        total = int(payload.get("container_total") or 0)
+        percent = min(100.0, current * 100.0 / total) if current and total else None
+        detail = str(payload.get("current_container") or payload.get("stage") or "")
+        base._event(
+            callback,
+            stage=stage,
+            kind="progress",
+            current=current,
+            total=total,
+            percent=percent,
+            detail=detail,
+            source_event=payload,
+        )
+
+    return emit
+
+
+def _build_iso_index_frozen_v9(project: FragmenterProjectV1) -> dict[str, Any]:
+    paths = require_ready_project(project)
+    target = paths.cache_iso / "iso_index.json"
+    payload = ccsf_extractor.build_iso_index(Path(paths.iso), target, quiet=True)
+    if not target.is_file():
+        raise FileNotFoundError(target)
+    return {
+        "path": str(target),
+        "count": int(payload.get("count") or 0),
+        "execution": "in_process_frozen",
+    }
+
+
+def _extract_ccsf_frozen_v9(
+    project: FragmenterProjectV1,
+    callback: Callable[[dict[str, Any]], None] | None,
+) -> dict[str, Any]:
+    paths = require_ready_project(project)
+    iso_index = paths.cache_iso / "iso_index.json"
+    extraction_json = paths.reports / "iso_ccsf_extraction_index.json"
+    extraction_text = paths.reports / "iso_ccsf_extraction_index.txt"
+    args = argparse.Namespace(
+        iso_path=str(paths.iso),
+        iso_index=str(iso_index),
+        workspace=str(paths.workspace),
+        out=str(extraction_json),
+        text_out=str(extraction_text),
+        max_scan_bytes=v8.CORE_SCAN_BYTES,
+        extract_cap=v8.CORE_EXTRACT_CAP,
+        container_limit=v8.CORE_CONTAINER_LIMIT,
+        asset_limit=None,
+        limit=None,
+        include=[],
+        exclude=[],
+        container=[],
+        build_index=False,
+        reuse_existing=True,
+        summary_only=False,
+        quiet=True,
+        index_assets=True,
+        include_failed_candidates=False,
+        include_non_ccsf_gzip=False,
+        ccsf_only=True,
+        gzip_only=False,
+        max_report_rows=ccsf_extractor.DEFAULT_MAX_REPORT_ROWS,
+        asset_index_jsonl=None,
+        max_failed_rows=ccsf_extractor.DEFAULT_MAX_FAILED_ROWS,
+        progress_jsonl=False,
+    )
+    report = ccsf_extractor.run(
+        args,
+        progress_callback=_ccsf_progress_v9(callback, "ccsf_extract"),
+    )
+    workspace_migration = migrate_workspace_layout(project.workspace_dir)
+    report_migration = migrate_report_layout(project)
+    asset_library = paths.reports / "asset_library.json"
+    if not extraction_json.is_file():
+        raise FileNotFoundError(extraction_json)
+    if not asset_library.is_file():
+        raise FileNotFoundError(asset_library)
+    return {
+        "execution": "in_process_frozen",
+        "report": str(extraction_json),
+        "asset_library": str(asset_library),
+        "confirmed_ccsf_bundles": int(
+            report.get("confirmed_ccsf_bundles_extracted") or 0
+        ),
+        "assets_indexed": int(report.get("ccsf_assets_indexed") or 0),
+        "workspace_layout_migration": workspace_migration,
+        "report_layout_migration": report_migration,
+    }
 
 
 def _run_internal_v9(
@@ -103,10 +223,17 @@ def _run_internal_v9(
 ) -> dict[str, Any]:
     if action.internal == "build_public_library_cache_v1":
         return build_public_library_cache(project)
+    if action.internal == "build_iso_index_frozen_v9":
+        return _build_iso_index_frozen_v9(project)
+    if action.internal == "extract_ccsf_frozen_v9":
+        return _extract_ccsf_frozen_v9(project, callback)
     return _ORIGINAL_INTERNAL(action, project, callback)
 
 
-def _strict_public_list_result(project: FragmenterProjectV1, result: dict[str, Any]) -> dict[str, Any]:
+def _strict_public_list_result(
+    project: FragmenterProjectV1,
+    result: dict[str, Any],
+) -> dict[str, Any]:
     """Do not let full RUN ALL claim success when its final visible lists are partial."""
     if str(result.get("status") or "") != "complete":
         return result
@@ -127,7 +254,10 @@ def _strict_public_list_result(project: FragmenterProjectV1, result: dict[str, A
     report_path = Path(str(result.get("report_path") or ""))
     if report_path.is_file():
         temporary = report_path.with_suffix(report_path.suffix + ".tmp")
-        temporary.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        temporary.write_text(
+            json.dumps(result, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
         temporary.replace(report_path)
     return result
 
@@ -151,13 +281,6 @@ def execute_run_all_v9(
 
 
 def is_first_scan_v9(project: FragmenterProjectV1) -> bool:
-    """Return true until every durable first-run stage is actually reusable.
-
-    The old test returned false as soon as *any* core stage appeared in run state.
-    A cancelled run or a damaged checkout could therefore skip the full Celdra
-    production even though required outputs were absent. This check requires both
-    matching state and extant outputs for the complete evidence chain.
-    """
     paths = require_ready_project(project)
     state = base.load_run_state(paths)
     by_key = {action.key: action for action in build_run_all_actions_v9(project)}
@@ -177,7 +300,6 @@ def install() -> None:
     v8._run_internal_v8 = _run_internal_v9
     v8.execute_run_all_v8 = execute_run_all_v9
     v8.is_first_scan_v8 = is_first_scan_v9
-    # Keep compatibility aliases coherent for inherited modules that import them.
     v8.build_run_all_actions_v7 = build_run_all_actions_v9
     v8.execute_run_all_v7 = execute_run_all_v9
     v8.PIPELINE_VERSION = 9
