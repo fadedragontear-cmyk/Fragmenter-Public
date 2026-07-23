@@ -31,6 +31,10 @@ install_event_window_patch()
 install_sample_generation_patch()
 install_run_all_plan_v3()
 install_run_all_executor_v9()
+
+from run_all_cancellation_v1 import install as install_run_all_cancellation  # noqa: E402
+
+install_run_all_cancellation()
 install_tellipatch_resource()
 
 import fragmenter_visual_runtime_v6  # noqa: E402,F401
@@ -43,6 +47,9 @@ from fragmenter_release_experience_v1 import (  # noqa: E402
 install_release_experience()
 
 from fragmenter_public_gui_v127 import main  # noqa: E402
+from run_all_cancel_ui_v1 import install as install_run_all_cancel_ui  # noqa: E402
+
+install_run_all_cancel_ui()
 
 
 if __name__ == "__main__":
