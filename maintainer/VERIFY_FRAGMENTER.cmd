@@ -29,10 +29,13 @@ py -3 -m py_compile ^
   tools\fragment_4_builder_v127.py ^
   tools\tellipatch_resource_v122.py ^
   tools\netslum_completion_v124.py ^
+  tools\run_all_executor_v9.py ^
   tools\build_fragmenter_release.py
 if errorlevel 1 goto :failed
 
-py -3 -m pytest -q tests\test_fragmenter_current_release.py
+py -3 -m pytest -q ^
+  tests\test_fragmenter_current_release.py ^
+  tests\test_frozen_run_all_release.py
 if errorlevel 1 goto :failed
 
 echo.
