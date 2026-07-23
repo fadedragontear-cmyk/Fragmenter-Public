@@ -20,6 +20,7 @@ BRAND_ICO_NAME = "Fragmenter.ico"
 RELEASE_RUNTIME_MODULES = (
     "fragmenter_release_experience_v1",
     "operation_dragonegg_v1",
+    "celdra_containment_override_v1",
     "run_all_cancellation_v1",
     "run_all_cancel_ui_v1",
 )
