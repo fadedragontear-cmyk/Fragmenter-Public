@@ -68,6 +68,8 @@ def pyinstaller_command(root: Path, bridge: Path) -> list[str]:
         "--paths",
         str(root / "tools"),
         "--hidden-import",
+        "fragmenter_release_experience_v1",
+        "--hidden-import",
         "fragmenter_public_gui_v127",
         "--hidden-import",
         "fragment_4_builder_v127",
@@ -112,15 +114,38 @@ def _clean_path(path: Path) -> None:
         path.unlink()
 
 
+def _required_celdra_assets(root: Path) -> tuple[Path, ...]:
+    celdra = root / "assets" / "celdra"
+    manifest_path = celdra / "manifest.json"
+    required: list[Path] = [manifest_path, celdra / "avatar" / "01.gif"]
+    if not manifest_path.is_file():
+        return tuple(required)
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ReleaseBuildError(f"Invalid Celdra manifest: {manifest_path}: {exc}") from exc
+    rows = manifest.get("emotes") if isinstance(manifest, dict) else None
+    if not isinstance(rows, list):
+        raise ReleaseBuildError(f"Celdra manifest has no emotes list: {manifest_path}")
+    for row in rows:
+        if not isinstance(row, dict) or not bool(row.get("enabled", True)):
+            continue
+        source = str(row.get("source") or "").strip()
+        if source:
+            required.append(celdra / source)
+    return tuple(dict.fromkeys(required))
+
+
 def _write_release_readme(path: Path) -> None:
     path.write_text(
         "Fragmenter 1.0 - Windows x64\n"
         "=================================================\n\n"
         "Run Fragmenter.exe. Python, .NET, ImgBurn, Tellipatch, and "
         "FragmentUpdater are not required at runtime.\n\n"
-        "Project Setup requires only an empty workspace. ISO, Area Server, save, "
-        "and memory-card paths are optional capabilities. Save Project stores the "
-        "available paths and selected theme; Run All skips unavailable stages.\n\n"
+        "Project Setup defaults to a project folder beside Fragmenter.exe. ISO, "
+        "Area Server, save, and memory-card paths are optional capabilities. Save "
+        "Project stores the available paths and selected theme; Run All skips "
+        "unavailable stages.\n\n"
         "Game Setup contains the complete playable-game workflow:\n"
         "- Build and verify Fragment 4.0 English directly from the untouched Japanese ISO.\n"
         "- No Tellipatch installation, preview ISO, or reference 4.0 image is required.\n"
@@ -144,6 +169,7 @@ def build_release(root: Path) -> dict[str, str | int]:
         root / "fragmenter_public.py",
         root / "THIRD_PARTY_NOTICES.md",
         root / "tools" / "iso_patch_dispatcher.py",
+        root / "tools" / "fragmenter_release_experience_v1.py",
         root / "tools" / "fragmenter_public_gui_v127.py",
         root / "tools" / "fragment_4_builder_v127.py",
         root / "tools" / "fragmenter_public_gui_v126.py",
@@ -166,6 +192,7 @@ def build_release(root: Path) -> dict[str, str | int]:
         root / "assets" / "branding" / BRAND_PNG_NAME,
         root / "assets" / "branding" / BRAND_ICO_NAME,
         root / "tools" / "iso_bridge" / "Fragmenter.IsoBridge.csproj",
+        *_required_celdra_assets(root),
     )
     missing = [str(path.relative_to(root)) for path in required if not path.is_file()]
     if missing:
