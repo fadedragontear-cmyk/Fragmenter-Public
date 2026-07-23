@@ -17,6 +17,17 @@ APP_NAME = "Fragmenter.exe"
 PACKAGE_NAME = "Fragmenter-Windows-x64"
 BRAND_PNG_NAME = "Fragmenter-Serenial.png"
 BRAND_ICO_NAME = "Fragmenter.ico"
+VISUAL_RUNTIME_MODULES = (
+    "fragmenter_visual_runtime_v6",
+    "ccsf_textured_scene_v9",
+    "ccsf_textured_renderer_v5",
+    "ccsf_wireframe_scene_v2",
+    "ccsf_asset_tree_v2",
+    "ccsf_visual_extract_v1",
+    "visual_asset_controller_v1",
+    "visual_asset_annotations_v3",
+    "visual_asset_annotations_v4",
+)
 
 
 class ReleaseBuildError(RuntimeError):
@@ -83,23 +94,29 @@ def pyinstaller_command(root: Path, bridge: Path) -> list[str]:
         "netslum_completion_v124",
         "--hidden-import",
         "tellipatch_resource_v122",
-        "--add-binary",
-        f"{bridge}{os.pathsep}runtime",
-        "--add-data",
-        f"{root / 'THIRD_PARTY_NOTICES.md'}{os.pathsep}.",
-        "--add-data",
-        f"{root / 'resources' / 'Fragment-Network.ps2.gz'}{os.pathsep}resources",
-        "--add-data",
-        f"{root / 'resources' / 'Tellipatch-gamelines.csv.gz'}{os.pathsep}resources",
-        "--add-data",
-        f"{root / 'resources' / 'game_setup'}{os.pathsep}resources/game_setup",
-        "--distpath",
-        str(root / "dist"),
-        "--workpath",
-        str(root / "build" / "pyinstaller"),
-        "--specpath",
-        str(root / "build"),
     ]
+    for module in VISUAL_RUNTIME_MODULES:
+        command.extend(("--hidden-import", module))
+    command.extend(
+        (
+            "--add-binary",
+            f"{bridge}{os.pathsep}runtime",
+            "--add-data",
+            f"{root / 'THIRD_PARTY_NOTICES.md'}{os.pathsep}.",
+            "--add-data",
+            f"{root / 'resources' / 'Fragment-Network.ps2.gz'}{os.pathsep}resources",
+            "--add-data",
+            f"{root / 'resources' / 'Tellipatch-gamelines.csv.gz'}{os.pathsep}resources",
+            "--add-data",
+            f"{root / 'resources' / 'game_setup'}{os.pathsep}resources/game_setup",
+            "--distpath",
+            str(root / "dist"),
+            "--workpath",
+            str(root / "build" / "pyinstaller"),
+            "--specpath",
+            str(root / "build"),
+        )
+    )
     assets = root / "assets"
     if assets.is_dir():
         command.extend(("--add-data", f"{assets}{os.pathsep}assets"))
@@ -146,6 +163,9 @@ def _write_release_readme(path: Path) -> None:
         "Area Server, save, and memory-card paths are optional capabilities. Save "
         "Project stores the available paths and selected theme; Run All skips "
         "unavailable stages.\n\n"
+        "The bundled 3D / Assets workspace uses the same in-process CCSF structure, "
+        "wireframe, textured-scene, texture-export, camera, and puppetry runtime as "
+        "the Python launcher.\n\n"
         "Game Setup contains the complete playable-game workflow:\n"
         "- Build and verify Fragment 4.0 English directly from the untouched Japanese ISO.\n"
         "- No Tellipatch installation, preview ISO, or reference 4.0 image is required.\n"
@@ -184,6 +204,7 @@ def build_release(root: Path) -> dict[str, str | int]:
         root / "tools" / "vcdiff_decoder.py",
         root / "tools" / "netslum_completion_v124.py",
         root / "tools" / "pcsx2_setup.py",
+        *(root / "tools" / f"{module}.py" for module in VISUAL_RUNTIME_MODULES),
         root / "resources" / "Fragment-Network.ps2.gz",
         root / "resources" / "Tellipatch-gamelines.csv.gz",
         root / "resources" / "game_setup" / "Tellipatch-v3.8-patches.zip.rawpart1.b64",
