@@ -3,6 +3,11 @@
 Fragmenter is a Windows-first research, project-management, and game-setup
 workbench for .hack//frägment
 
+## Current cut — OPERATION DRAGONEGG
+
+The source launcher and packaged Windows build share one first-run presentation,
+asset path, cancellation policy, and in-process 3D runtime.
+
 ## Start Fragmenter
 
 From a clean checkout, double-click:
@@ -26,4 +31,4 @@ Python 3 with Tkinter is required when running from source. The packaged
 ## Credits and redistribution
 
 Third-party acknowledgements and license text are retained in
-[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). 
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
