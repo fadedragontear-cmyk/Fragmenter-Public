@@ -31,6 +31,9 @@ py -3 -m py_compile ^
   tools\netslum_completion_v124.py ^
   tools\run_all_executor_v9.py ^
   tools\fragmenter_release_experience_v1.py ^
+  tools\fragmenter_visual_runtime_v6.py ^
+  tools\ccsf_textured_scene_v9.py ^
+  tools\ccsf_textured_renderer_v5.py ^
   tools\build_fragmenter_release.py
 if errorlevel 1 goto :failed
 
