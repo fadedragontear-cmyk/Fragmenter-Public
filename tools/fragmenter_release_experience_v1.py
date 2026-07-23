@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Release-runtime fixes for packaged assets, project defaults, and presentation flow."""
+"""Source/frozen parity for packaged assets, project defaults, and presentation flow."""
 from __future__ import annotations
 
 import sys
@@ -12,6 +12,7 @@ from celdra_assets_v1 import asset_inventory
 import fragmenter_public_gui as base_gui
 import fragmenter_public_gui_v50 as gui_v50
 import fragmenter_public_gui_v54 as gui_v54
+import fragmenter_public_gui_v63 as gui_v63
 import fragmenter_public_gui_v99 as gui_v99
 import fragmenter_public_gui_v127 as gui_v127
 
@@ -19,6 +20,9 @@ _INSTALLED = False
 _ORIGINAL_BASE_BUILD_SETUP = base_gui.PublicFragmenterApp._build_setup
 _ORIGINAL_BASE_LOAD_PROJECT = base_gui.PublicFragmenterApp._load_project_dialog
 _ORIGINAL_V50_INIT = gui_v50.PublicFragmenterAppV50.__init__
+_ORIGINAL_V50_REDRAW = gui_v50.PublicFragmenterAppV50._redraw_celdra_avatar_v50
+_ORIGINAL_V63_BEGIN_HATCH_GIF = gui_v63.PublicFragmenterAppV63._begin_hatch_gif_v63
+_ORIGINAL_V99_START_TAKEOVER = gui_v99.PublicFragmenterAppV99._start_avatar_takeover_v58
 _ORIGINAL_V127_INIT = gui_v127.PublicFragmenterAppV127.__init__
 
 
@@ -40,6 +44,10 @@ def bundled_data_root() -> Path:
 
 def celdra_asset_root() -> Path:
     return bundled_data_root() / "assets" / "celdra"
+
+
+def branding_image_path() -> Path:
+    return bundled_data_root() / "assets" / "branding" / "Fragmenter-Serenial.png"
 
 
 def default_project_workspace() -> Path:
@@ -84,12 +92,89 @@ def _load_project_release(self: Any) -> None:
 
 
 def _v50_init_release(self: Any) -> None:
+    self._fragmenter_celdra_egg_retired_v1 = False
+    self._fragmenter_fallback_logo_v1: tk.PhotoImage | None = None
+    self._fragmenter_fallback_logo_attempted_v1 = False
     _ORIGINAL_V50_INIT(self)
     # Top-level Python modules live directly under _MEIPASS in a one-file build;
     # Path(__file__).parents[1] therefore points outside the bundle. Reassert the
     # actual data root before V56 loads the classified reaction manifest.
     self.celdra_asset_root_v50 = celdra_asset_root()
     self.celdra_asset_inventory_v50 = asset_inventory(self.celdra_asset_root_v50)
+
+
+def _retire_pixel_egg(self: Any) -> None:
+    """Prevent pre-hatch pixel art from becoming a post-hatch missing-frame fallback."""
+    self._fragmenter_celdra_egg_retired_v1 = True
+
+
+def _begin_hatch_gif_release(self: Any) -> None:
+    # The real baby-dragon handoff is the point of no return. Even if GIF decoding
+    # fails, the old egg must not return during the whiteout or later transitions.
+    _retire_pixel_egg(self)
+    _ORIGINAL_V63_BEGIN_HATCH_GIF(self)
+
+
+def _start_takeover_release(self: Any) -> None:
+    # Classified dragongirl presentation also permanently retires the hatch egg.
+    _retire_pixel_egg(self)
+    _ORIGINAL_V99_START_TAKEOVER(self)
+
+
+def _should_use_post_hatch_fallback(self: Any) -> bool:
+    return bool(getattr(self, "_fragmenter_celdra_egg_retired_v1", False)) and getattr(
+        self, "celdra_current_external_v50", None
+    ) is None
+
+
+def _fallback_logo(self: Any) -> tk.PhotoImage | None:
+    cached = getattr(self, "_fragmenter_fallback_logo_v1", None)
+    if cached is not None:
+        return cached
+    if bool(getattr(self, "_fragmenter_fallback_logo_attempted_v1", False)):
+        return None
+    self._fragmenter_fallback_logo_attempted_v1 = True
+    path = branding_image_path()
+    if not path.is_file():
+        return None
+    try:
+        source = tk.PhotoImage(file=str(path))
+        display = self._fit_photo_v50(source, 250, 250)
+    except (tk.TclError, OSError, ValueError):
+        return None
+    # Keep both references alive because Tk images disappear when Python releases them.
+    self._fragmenter_fallback_logo_source_v1 = source
+    self._fragmenter_fallback_logo_v1 = display
+    return display
+
+
+def _redraw_celdra_release(self: Any) -> None:
+    canvas = getattr(self, "celdra_avatar_canvas_v50", None)
+    if canvas is None:
+        return
+    if not _should_use_post_hatch_fallback(self):
+        try:
+            canvas.configure(background="#10151d")
+        except tk.TclError:
+            pass
+        _ORIGINAL_V50_REDRAW(self)
+        return
+
+    # Once the actual hatch begins, a cleared/missing image is represented by the
+    # Serenial mark. If even that bundled image cannot load, the viewport stays dark.
+    try:
+        canvas.delete("all")
+        canvas.configure(background="#05070b")
+        logo = _fallback_logo(self)
+        if logo is not None:
+            canvas.create_image(
+                max(1, canvas.winfo_width()) // 2,
+                max(1, canvas.winfo_height()) // 2,
+                image=logo,
+                anchor="center",
+            )
+    except tk.TclError:
+        pass
 
 
 def _takeover_wink_release(self: Any) -> None:
@@ -178,6 +263,9 @@ def install() -> None:
     base_gui.PublicFragmenterApp._pick_workspace = _pick_workspace_release
     base_gui.PublicFragmenterApp._load_project_dialog = _load_project_release
     gui_v50.PublicFragmenterAppV50.__init__ = _v50_init_release
+    gui_v50.PublicFragmenterAppV50._redraw_celdra_avatar_v50 = _redraw_celdra_release
+    gui_v63.PublicFragmenterAppV63._begin_hatch_gif_v63 = _begin_hatch_gif_release
+    gui_v99.PublicFragmenterAppV99._start_avatar_takeover_v58 = _start_takeover_release
     gui_v99.PublicFragmenterAppV99._takeover_wink_v58 = _takeover_wink_release
     gui_v127.PublicFragmenterAppV127.__init__ = _v127_init_release
     _INSTALLED = True
